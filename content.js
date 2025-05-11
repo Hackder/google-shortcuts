@@ -165,15 +165,15 @@ function handleKeyDown(event) {
         break;
       }
 
+      event.preventDefault();
+
       if (event.shiftKey) {
-        event.preventDefault();
         state.selectedIndex = state.searchResults.length - 1;
         highlightSelected();
         break;
       }
 
       if (lastGKeyPress + 1000 > Date.now()) {
-        event.preventDefault();
         state.selectedIndex = 0;
         highlightSelected();
         break;
