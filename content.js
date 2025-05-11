@@ -1,4 +1,14 @@
 /**
+ * @param {number} value
+ * @param {number} min
+ * @param {number} max
+ * @returns {number}
+ */
+function clamp(value, min, max) {
+  return Math.max(min, Math.min(value, max));
+}
+
+/**
  * @returns {Promise<HTMLDivElement | null>}
  */
 async function waitForSearchElement() {
@@ -64,7 +74,11 @@ function highlightSelected() {
   console.log(element);
 
   const boundingRect = element.getBoundingClientRect();
-  if (boundingRect.top < 0 || boundingRect.bottom > window.innerHeight) {
+  if (state.selectedIndex === 0) {
+    window.scrollTo({
+      top: 0,
+    });
+  } else if (boundingRect.top < 0 || boundingRect.bottom > window.innerHeight) {
     element?.scrollIntoView({
       block: "center",
     });
@@ -85,6 +99,8 @@ function highlightSelected() {
   element.classList.add("gscss-highlight");
 }
 
+let lastGKeyPress = 0;
+
 /**
  * @param {KeyboardEvent} event
  */
@@ -100,17 +116,22 @@ function handleKeyDown(event) {
     case "j":
     case "ArrowDown": {
       event.preventDefault();
-      state.selectedIndex =
-        (state.selectedIndex + 1) % state.searchResults.length;
+      state.selectedIndex = clamp(
+        state.selectedIndex + 1,
+        0,
+        state.searchResults.length - 1,
+      );
       highlightSelected();
       break;
     }
     case "k":
     case "ArrowUp": {
       event.preventDefault();
-      state.selectedIndex =
-        (state.selectedIndex - 1 + state.searchResults.length) %
-        state.searchResults.length;
+      state.selectedIndex = clamp(
+        state.selectedIndex - 1,
+        0,
+        state.searchResults.length - 1,
+      );
       highlightSelected();
       break;
     }
@@ -136,6 +157,29 @@ function handleKeyDown(event) {
       }
 
       window.location.href = link.href;
+      break;
+    }
+    case "G":
+    case "g": {
+      if (event.metaKey || event.ctrlKey) {
+        break;
+      }
+
+      if (event.shiftKey) {
+        event.preventDefault();
+        state.selectedIndex = state.searchResults.length - 1;
+        highlightSelected();
+        break;
+      }
+
+      if (lastGKeyPress + 1000 > Date.now()) {
+        event.preventDefault();
+        state.selectedIndex = 0;
+        highlightSelected();
+        break;
+      }
+
+      lastGKeyPress = Date.now();
       break;
     }
   }
