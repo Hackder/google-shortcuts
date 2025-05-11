@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "module": "NodeNext",
+    "noEmit": true,
+    "allowJs": true,
+    "checkJs": true,
+    "strict": true,
+    "moduleResolution": "nodenext",
+    "target": "esnext",
+    "noUncheckedIndexedAccess": true
+  }
+}

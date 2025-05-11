@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "Google shortcuts",
+  "version": "1.0.0",
+  "description": "Navigate search results with shortcuts",
+  "content_scripts": [
+    {
+      "matches": ["https://www.google.com/search*"],
+      "js": ["content.js"],
+      "css": ["style.css"],
+      "run_at": "document_start"
+    }
+  ],
+  "permissions": ["activeTab"]
+}
