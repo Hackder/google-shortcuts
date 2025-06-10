@@ -65,13 +65,20 @@ const state = {
 };
 
 function highlightSelected() {
+  if (state.searchResults.length === 0) {
+    return;
+  }
+
   // Scroll into view
   const element = state.searchResults[state.selectedIndex];
   if (element === undefined) {
-    console.error("Selected element is undefined");
+    console.error(
+      "Selected element is undefined",
+      state.searchResults.length,
+      state.selectedIndex,
+    );
     return;
   }
-  console.log(element);
 
   const boundingRect = element.getBoundingClientRect();
   if (state.selectedIndex === 0) {
@@ -227,8 +234,14 @@ function extractSearchResults(searchElement) {
 function handleSearchResultsChanged(searchElement, mutationList, observer) {
   const searchResults = extractSearchResults(searchElement);
 
+  // Highlight only if we got more results, and the current one wasn't already highlihgted
+  let shouldHighlight = state.searchResults.length <= state.selectedIndex;
+
   state.searchResults = searchResults;
-  highlightSelected();
+
+  if (shouldHighlight) {
+    highlightSelected();
+  }
 }
 
 async function main() {
